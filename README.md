@@ -1,6 +1,6 @@
 # OPC_Projet_2
 
-Descprption du projet:
+Déscription du projet:
 
 Le but du projet est de récupérer des informations pour tous les livres présents sur le site : "http://books.toscrape.com/" dans un répértoire "Datas".
 
