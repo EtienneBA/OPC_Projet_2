@@ -3,7 +3,9 @@ from bs4 import BeautifulSoup
 from math import *
 import re
 import numpy as np
+import numba
 from numba import jit
+import os
 
 
 # ************************************************************************---> FUNCTIONS USED <---************************************************************************ #
@@ -72,6 +74,7 @@ response = requests.get(url) # permet d'obtenir le contenu de l'url passée en p
 soup = BeautifulSoup(response.text, 'lxml') # permet de parser le contenu à l'aide de BeautifulSoup et du parseur 'lxml'
 categories = {}
 categories_url_listing(soup) # utilisation de cette fonction pour obtenir une liste des urls pour chaque catégorie de livre
+os.mkdir('Datas') # permet de créer le répérértoire 'Datas' qui va accueillir les fichiers CSV et les images
 
 for key in categories: # itérations dans la liste 'categories' elle même fournie par la fonction 'categories_url_listing' pour aller chercher les adresses des catégories
     url_category = categories[key]
