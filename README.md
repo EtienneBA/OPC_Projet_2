@@ -1,7 +1,7 @@
 # P2_baudouin_etienne
 
 
-## Déscription du projet:
+## Déscription du projet :
 
 
 Le but du projet est de récupérer des informations pour tous les livres présents sur ce [site](http://books.toscrape.com/ "books.toscrape.com") dans un répértoire "Datas".
@@ -21,9 +21,9 @@ Les informations concernées sont les suivantes:
 Le scrip enregistre la liste des informations obtenues pour chaque livre par catégorie (ex: Travel, Mystery, Historical Fiction etc).
 Il enregistre aussi l'image de tous les livres, toujours dans le dossier "Datas". 
 
-## Environnement de développement: 
+## Environnement de développement : 
 
-Placez vous dans votre répértoire de travail en utilisant le terminal et la commande "cd", comme ci dessous:
+Placez vous dans votre répértoire de travail en utilisant le terminal et la commande "cd", comme ci dessous :
 ```
 cd <répértoire>
 ```
@@ -41,9 +41,9 @@ Vous pouvez installer les paquets contenus dans le fichier "requirements.txt" en
 pip install -r requirements.txt
 ```
 
-## Instructions pour lancer le script:
+## Instructions pour lancer le script :
 
-Vous pouvez maintenant lancer le script de scraping en tapant, toujours dans le terminal, la commande suivante: 
+Vous pouvez maintenant lancer le script de scraping en tapant, toujours dans le terminal, la commande suivante : 
 ```
 python Script_scraping.py
 ```
