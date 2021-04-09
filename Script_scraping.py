@@ -2,9 +2,6 @@ import requests
 from bs4 import BeautifulSoup
 from math import *
 import re
-import numpy as np
-import numba
-from numba import jit
 import os
 
 
@@ -12,17 +9,20 @@ import os
 
 
 def urls_books_by_category(response): # permet d'obtenir la liste de tous les url des livres pour une catégorie
+    
     if response.ok:
         soup = BeautifulSoup(response.text, 'lxml')
         livre = soup.findAll('article')
         # création d'une liste composées des urls de tous les livres d'une catégorie
+        
         for article in livre:
             a = article.find('a')
             link = a['href']
             links_books_by_category.append('http://books.toscrape.com/catalogue/' + link[9:])
-
+        return links_books_by_category
 
 def book_image_saving(title,image_url): # permet de sauvegarder l'image d'un livre dans un fichier 'Datas' qui se trouve dans le répértoire du projet
+    
     title = title.strip()  # la méthode '.strip()' permet de supprimer les espaces en début et fin de variable de type 'string'
     title = re.sub("\W+", "_", title)  # supprime les caractères spéciaux contenus dans les titres de livre
 
@@ -39,8 +39,10 @@ def book_datas_writing(key,links_books_by_category): # permet de créer un fichi
         outf.write('upc, title, price_including_tax, price_excluding_tax, number_available, product_description, category, review_rating\n')
 
         for el in links_books_by_category: # itération au sein de la liste d'url de chaque catégorie
+            
             url = el.strip()
             response = requests.get(url)
+            
             if response.ok:
                 soup = BeautifulSoup(response.text, 'lxml')
 
@@ -77,8 +79,10 @@ categories_url_listing(soup) # utilisation de cette fonction pour obtenir une li
 os.mkdir('Datas') # permet de créer le répérértoire 'Datas' qui va accueillir les fichiers CSV et les images
 
 for key in categories: # itérations dans la liste 'categories' elle même fournie par la fonction 'categories_url_listing' pour aller chercher les adresses des catégories
+    
     url_category = categories[key]
     response = requests.get(url_category)
+   
     if response.ok:
         soup = BeautifulSoup(response.text, 'lxml')
 
@@ -88,16 +92,21 @@ for key in categories: # itérations dans la liste 'categories' elle même fourn
         print('Nombre de pages: ', pages_number)
 
         if pages_number > 1: # si il y a plusieurs page au sein d'une catégorie, le script pagine pour obtenir l'URL de chaque livre:
+            
             links_books_by_category = [] # utilisation du dictionnaire 'links_books_by_category' pour la suite du script
+            
             for i in range(1,pages_number+1): # itération au sein des page avec une boucle for
+                
                 url_page = url_category.replace("index.html", "") + 'page-' + str(i) + '.html'
                 print('lien de la page', i,':',url_page)
                 response = requests.get(url_page)
                 urls_books_by_category(response)
-                book_datas_writing(key,links_books_by_category)
-                links_books_by_category = []
+
+            book_datas_writing(key,links_books_by_category)
+
 
         else: # Sinon le script prend directement l'url de l'unique page existante comme entrée
+            
             links_books_by_category = []
             print('lien de la page :',url_category)
             response = requests.get(url_category)
