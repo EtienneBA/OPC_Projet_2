@@ -29,7 +29,7 @@ cd <répértoire>
 ```
 Créez un environnement virtuel en utilisant la commande python :
 ```
--m venv env.
+-m venv env
 ```
 Activez l'environnement en utilisant la commande adapté à votre système d'exploitation. Sous Windows, il s'agit de : 
 ```
