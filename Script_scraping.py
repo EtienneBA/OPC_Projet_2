@@ -9,12 +9,12 @@ import os
 
 
 def urls_books_by_category(response): # permet d'obtenir la liste de tous les url des livres pour une catégorie
-    
+
     if response.ok:
         soup = BeautifulSoup(response.text, 'lxml')
         livre = soup.findAll('article')
         # création d'une liste composées des urls de tous les livres d'une catégorie
-        
+
         for article in livre:
             a = article.find('a')
             link = a['href']
@@ -22,7 +22,7 @@ def urls_books_by_category(response): # permet d'obtenir la liste de tous les ur
         return links_books_by_category
 
 def book_image_saving(title,image_url): # permet de sauvegarder l'image d'un livre dans un fichier 'Datas' qui se trouve dans le répértoire du projet
-    
+
     title = title.strip()  # la méthode '.strip()' permet de supprimer les espaces en début et fin de variable de type 'string'
     title = re.sub("\W+", "_", title)  # supprime les caractères spéciaux contenus dans les titres de livre
 
@@ -34,31 +34,33 @@ def book_image_saving(title,image_url): # permet de sauvegarder l'image d'un liv
 
 
 def book_datas_writing(key,links_books_by_category): # permet de créer un fichier '.csv' (à chaque catégorie son fichier) en sortie regroupant toutes les informations de tous les livres d'une catégorie de livres
+        with open('Datas/' + key + '.csv', 'w', encoding="utf8") as outf: # création du fichier de sortie en '.csv'
+            outf.write('upc, title, price_including_tax, price_excluding_tax, number_available, product_description, category, review_rating\n')
+            i = 1 # cela va me permettre de rajouter au titre du livre son numéro pour identifier sa position au sein de la catégorie et le rendre unique
+            for el in links_books_by_category: # itération au sein de la liste d'url de chaque catégorie
 
-    with open('Datas/' + key + '.csv', 'w', encoding="utf8") as outf: # création du fichier de sortie en '.csv'
-        outf.write('upc, title, price_including_tax, price_excluding_tax, number_available, product_description, category, review_rating\n')
+                url = el.strip()
+                response = requests.get(url)
 
-        for el in links_books_by_category: # itération au sein de la liste d'url de chaque catégorie
-            
-            url = el.strip()
-            response = requests.get(url)
-            
-            if response.ok:
-                soup = BeautifulSoup(response.text, 'lxml')
+                if response.ok:
+                    soup = BeautifulSoup(response.text, 'lxml')
 
-                universal_product_code = soup.find('td').text
-                title = soup.find('h1').text
-                price_including_tax = soup.find('th', text='Price (incl. tax)').find_next('td').text[1:]
-                price_excluding_tax = soup.find('th', text='Price (excl. tax)').find_next('td').text[1:]
-                number_available = soup.find('th', text='Availability').find_next('td').text
-                product_description = soup.find('h2').find_next().text
-                category = soup.find('a').find_next('a').find_next('a').find_next('a').text
-                review_rating = soup.find('p', class_='star-rating')['class'][1]
-                image_url = 'http://books.toscrape.com/' + soup.find('img')['src']
-                outf.write(universal_product_code + ',' + title + ',' + price_including_tax + ',' + price_excluding_tax + ',' + number_available + ',' + product_description.replace(',', '') + ',' + category + ',' + review_rating + image_url + '\n')
+                    universal_product_code = soup.find('td').text
+                    title = soup.find('h1').text
+                    title = title
+                    price_including_tax = soup.find('th', text='Price (incl. tax)').find_next('td').text[1:]
+                    price_excluding_tax = soup.find('th', text='Price (excl. tax)').find_next('td').text[1:]
+                    number_available = soup.find('th', text='Availability').find_next('td').text
+                    product_description = soup.find('h2').find_next().text
+                    category = soup.find('a').find_next('a').find_next('a').find_next('a').text
+                    review_rating = soup.find('p', class_='star-rating')['class'][1]
+                    image_url = 'http://books.toscrape.com/' + soup.find('img')['src']
+                    outf.write(universal_product_code + ',' + title + ',' + price_including_tax + ',' + price_excluding_tax + ',' + number_available + ',' + product_description.replace(',', '') + ',' + category + ',' + review_rating + image_url + '\n')
 
-                book_image_saving(title,image_url) # utilisation de la fonction pour enregistrer l'image correspondante du livre
-
+                    title = title[:75] + (title[75:] and '...') # permet de limiter la longueur des titres
+                    title = str(i) + '_' + title + '_' + key # j'ajoute la catégorie au titre pour pouvoir distinguer les titres qui auraient le meme nom mais qui appartiennent à différentes catégories
+                    book_image_saving(title,image_url) # utilisation de la fonction pour enregistrer l'image correspondante du livre
+                    i += 1
 
 def categories_url_listing(soup): # permet de créer une liste 'categories' regroupant les urls de chaque catégorie
 
@@ -79,10 +81,10 @@ categories_url_listing(soup) # utilisation de cette fonction pour obtenir une li
 os.mkdir('Datas') # permet de créer le répérértoire 'Datas' qui va accueillir les fichiers CSV et les images
 
 for key in categories: # itérations dans la liste 'categories' elle même fournie par la fonction 'categories_url_listing' pour aller chercher les adresses des catégories
-    
+
     url_category = categories[key]
     response = requests.get(url_category)
-   
+
     if response.ok:
         soup = BeautifulSoup(response.text, 'lxml')
 
@@ -92,11 +94,11 @@ for key in categories: # itérations dans la liste 'categories' elle même fourn
         print('Nombre de pages: ', pages_number)
 
         if pages_number > 1: # si il y a plusieurs page au sein d'une catégorie, le script pagine pour obtenir l'URL de chaque livre:
-            
+
             links_books_by_category = [] # utilisation du dictionnaire 'links_books_by_category' pour la suite du script
-            
+
             for i in range(1,pages_number+1): # itération au sein des page avec une boucle for
-                
+
                 url_page = url_category.replace("index.html", "") + 'page-' + str(i) + '.html'
                 print('lien de la page', i,':',url_page)
                 response = requests.get(url_page)
@@ -106,7 +108,7 @@ for key in categories: # itérations dans la liste 'categories' elle même fourn
 
 
         else: # Sinon le script prend directement l'url de l'unique page existante comme entrée
-            
+
             links_books_by_category = []
             print('lien de la page :',url_category)
             response = requests.get(url_category)
