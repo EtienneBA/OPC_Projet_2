@@ -29,9 +29,9 @@ cd <répértoire>
 ```
 Créez un environnement virtuel en utilisant la commande python :
 ```
--m venv env
+python -m venv env
 ```
-Activez l'environnement en utilisant la commande adapté à votre système d'exploitation. Sous Windows, il s'agit de : 
+Activez l'environnement en utilisant la commande adaptée à votre système d'exploitation. Sous Windows, il s'agit de : 
 ```
 env/Scripts/activate
 ```
